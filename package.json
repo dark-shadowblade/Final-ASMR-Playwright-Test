@@ -2,15 +2,27 @@
   "name": "final-asmr-playwright-test",
   "version": "0.1.0",
   "private": true,
-  "description": "Isolated Playwright proof-of-work harness for Google Flow browser sessions",
+  "description": "Five-account Google Flow Playwright automation",
+  "main": "electron-main.cjs",
   "type": "module",
   "scripts": {
     "install:browsers": "playwright install chrome",
     "inspect": "node src/inspect-flow.js",
     "run": "node src/runner.js",
-    "check": "node --check src/inspect-flow.js && node --check src/runner.js"
+    "check": "node --check src/inspect-flow.js && node --check src/runner.js && node --check electron-main.cjs && node --check electron-preload.cjs",
+    "dist": "electron-builder --win portable"
   },
   "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12",
     "playwright": "^1.56.1"
+  },
+  "build": {
+    "appId": "com.darkshadowblade.finalasmrplaywright",
+    "productName": "Final ASMR Playwright",
+    "asar": true,
+    "asarUnpack": ["node_modules/playwright/**", "node_modules/playwright-core/**"],
+    "files": ["electron-main.cjs", "electron-preload.cjs", "electron-ui.html", "src/**/*", "config/accounts.example.json", "prompts.example.json", "node_modules/**/*", "package.json"],
+    "win": { "target": ["portable"], "artifactName": "Final-ASMR-Playwright-${version}-Windows.exe" }
   }
 }
