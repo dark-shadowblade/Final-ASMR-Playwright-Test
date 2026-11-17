@@ -1,15 +1,10 @@
 name: Windows installer
+
 on:
   push:
     branches: [main]
-    paths:
-      - "**"
-      - ".github/workflows/validate.yml"
   pull_request:
     branches: [main]
-    paths:
-      - "**"
-      - ".github/workflows/validate.yml"
   workflow_dispatch:
 
 permissions:
@@ -18,7 +13,7 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -27,6 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
 
       - name: Install desktop dependencies
         run: npm install
@@ -34,14 +30,25 @@ jobs:
       - name: Check JavaScript syntax
         run: npm run check
 
+      - name: Install Playwright Chromium into a portable folder
+        shell: pwsh
+        run: |
+          $env:PLAYWRIGHT_BROWSERS_PATH = Join-Path $PWD ".pw-browsers"
+          npx playwright install chromium
+          if ($LASTEXITCODE -ne 0) { throw "Playwright Chromium installation failed." }
+          if (-not (Get-ChildItem ".pw-browsers" -Directory -ErrorAction SilentlyContinue)) {
+            throw "No Playwright browser directory was created."
+          }
+
       - name: Build Windows installer
         run: npm run dist:win
 
       - name: Verify installer exists
-        shell: powershell
+        shell: pwsh
         run: |
           $exe = Get-ChildItem -Path release -Filter *.exe -Recurse | Select-Object -First 1
           if (-not $exe) { throw "Windows installer EXE was not produced." }
+          if ($exe.Length -lt 1MB) { throw "Installer is unexpectedly small: $($exe.Length) bytes" }
           Write-Host "Built: $($exe.FullName)"
           Write-Host "Size: $($exe.Length) bytes"
 
