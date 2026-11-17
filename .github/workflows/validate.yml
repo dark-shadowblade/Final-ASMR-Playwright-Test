@@ -1,16 +1,27 @@
-name: Validate Playwright harness
+name: Build Windows EXE
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 jobs:
-  syntax:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
       - run: npm install
       - run: npm run check
+      - name: Build portable Windows EXE
+        run: npm run dist
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: Final-ASMR-Playwright-Windows-EXE
+          path: dist/*.exe
+          if-no-files-found: error
+          retention-days: 14
