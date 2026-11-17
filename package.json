@@ -6,7 +6,7 @@
   "main": "electron-main.cjs",
   "type": "module",
   "scripts": {
-    "install:browsers": "playwright install chrome",
+    "install:browsers": "playwright install chromium",
     "inspect": "node src/inspect-flow.js",
     "run": "node src/runner.js",
     "check": "node --check src/inspect-flow.js && node --check src/runner.js && node --check electron-main.cjs && node --check electron-preload.cjs",
@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "electron": "^34.0.0",
-    "electron-builder": "^26.0.12",
+    "electron-builder": "^26.0.0",
     "playwright": "^1.56.1"
   },
   "build": {
@@ -32,6 +32,9 @@
       "prompts.example.json",
       "node_modules/**/*",
       "package.json"
+    ],
+    "extraResources": [
+      { "from": ".pw-browsers", "to": "playwright-browsers" }
     ],
     "win": { "target": [{ "target": "nsis", "arch": ["x64"] }] },
     "nsis": {
