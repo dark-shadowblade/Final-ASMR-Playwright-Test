@@ -1,0 +1,24 @@
+{
+  "accounts": [
+    {
+      "id": "account-01",
+      "projectUrl": "https://flow.google.com/project/REPLACE_PROJECT_ID_1"
+    },
+    {
+      "id": "account-02",
+      "projectUrl": "https://flow.google.com/project/REPLACE_PROJECT_ID_2"
+    },
+    {
+      "id": "account-03",
+      "projectUrl": "https://flow.google.com/project/REPLACE_PROJECT_ID_3"
+    },
+    {
+      "id": "account-04",
+      "projectUrl": "https://flow.google.com/project/REPLACE_PROJECT_ID_4"
+    },
+    {
+      "id": "account-05",
+      "projectUrl": "https://flow.google.com/project/REPLACE_PROJECT_ID_5"
+    }
+  ]
+}
