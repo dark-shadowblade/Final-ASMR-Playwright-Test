@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "install:browsers": "playwright install chrome",
-    "inspect": "node src/inspect-flow.js"
+    "inspect": "node src/inspect-flow.js",
+    "run": "node src/runner.js",
+    "check": "node --check src/inspect-flow.js && node --check src/runner.js"
   },
   "devDependencies": {
     "playwright": "^1.56.1"
