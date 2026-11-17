@@ -13,11 +13,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
       - run: npm install
       - run: npm run check
       - name: Build portable Windows EXE
         run: npm run dist
+      - name: Verify EXE exists
+        shell: powershell
+        run: |
+          $exe = Get-ChildItem -Path dist -Filter *.exe -Recurse | Select-Object -First 1
+          if (-not $exe) { throw "No Windows EXE was produced." }
+          Write-Host "Built: $($exe.FullName)"
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
