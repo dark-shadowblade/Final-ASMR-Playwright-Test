@@ -64,7 +64,6 @@ async function submitAccount(account, prompt, outputDir) {
   const profileDir = path.join(PROFILE_ROOT, account.id);
   await mkdir(profileDir, { recursive: true });
   const context = await chromium.launchPersistentContext(profileDir, {
-    channel: "chrome",
     headless: false,
     viewport: null,
     acceptDownloads: true,
