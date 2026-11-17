@@ -1,32 +1,54 @@
-name: Build Windows EXE
+name: Windows installer
 on:
   push:
     branches: [main]
+    paths:
+      - "**"
+      - ".github/workflows/validate.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "**"
+      - ".github/workflows/validate.yml"
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install
-      - run: npm run check
-      - name: Build portable Windows EXE
-        run: npm run dist
-      - name: Verify EXE exists
+          node-version: "22"
+
+      - name: Install desktop dependencies
+        run: npm install
+
+      - name: Check JavaScript syntax
+        run: npm run check
+
+      - name: Build Windows installer
+        run: npm run dist:win
+
+      - name: Verify installer exists
         shell: powershell
         run: |
-          $exe = Get-ChildItem -Path dist -Filter *.exe -Recurse | Select-Object -First 1
-          if (-not $exe) { throw "No Windows EXE was produced." }
+          $exe = Get-ChildItem -Path release -Filter *.exe -Recurse | Select-Object -First 1
+          if (-not $exe) { throw "Windows installer EXE was not produced." }
           Write-Host "Built: $($exe.FullName)"
-      - name: Upload EXE
+          Write-Host "Size: $($exe.Length) bytes"
+
+      - name: Upload Windows installer
         uses: actions/upload-artifact@v4
         with:
-          name: Final-ASMR-Playwright-Windows-EXE
-          path: dist/*.exe
+          name: Final-ASMR-Playwright-Windows-Installer
+          path: release/*.exe
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 30
