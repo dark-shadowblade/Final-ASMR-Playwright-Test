@@ -81,12 +81,13 @@ async function submitAccount(account, prompt, outputDir) {
     }
     await page.waitForTimeout(2500);
     const baselineVideos = await page.locator("video").count();
+    const baselineVideoSources = await page.locator("video").evaluateAll(nodes => nodes.map(el => el.currentSrc || el.src || ""));
     await fillPrompt(page, prompt);
     await clickGenerate(page);
     await writeFile(path.join(outputDir, account.id + ".submitted.json"), JSON.stringify({
-      accountId: account.id, projectUrl: account.projectUrl, submittedAt: new Date().toISOString(), baselineVideos
+      accountId: account.id, projectUrl: account.projectUrl, submittedAt: new Date().toISOString(), baselineVideos, baselineVideoSources
     }, null, 2));
-    return { account, context, page, baselineVideos, prompt, outputDir };
+    return { account, context, page, baselineVideos, baselineVideoSources, prompt, outputDir };
   } catch (error) {
     await context.close().catch(() => {});
     throw error;
@@ -106,7 +107,8 @@ async function waitForNewVideo(task, timeoutMs = 30 * 60 * 1000) {
         width: el.videoWidth,
         height: el.videoHeight
       })).catch(() => null);
-      if (info && info.readyState >= 2 && info.width > 0 && info.height > 0) return video;
+      const isNew = i >= task.baselineVideos || (info && info.src && !task.baselineVideoSources.includes(info.src));
+      if (isNew && info && info.readyState >= 2 && info.width > 0 && info.height > 0) return video;
     }
     await sleep(5000);
   }
