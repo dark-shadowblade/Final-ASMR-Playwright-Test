@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Final ASMR Playwright</title><style>
+body{font:14px Segoe UI,Arial;background:#101318;color:#e9edf3;margin:0;padding:24px}h1{font-size:22px;margin:0 0 8px}p{color:#aab4c2;line-height:1.5}button{background:#2867e8;color:white;border:0;border-radius:7px;padding:11px 16px;margin:8px 8px 12px 0;cursor:pointer}.secondary{background:#303946}#log{height:300px;overflow:auto;white-space:pre-wrap;background:#080a0d;border:1px solid #303946;border-radius:8px;padding:12px;color:#cbd5e1}</style></head><body>
+<h1>Final ASMR Playwright</h1><p>Configure the five Flow project URLs and prompts first. Google Chrome must be installed.</p>
+<button id="config" class="secondary">Open configuration folder</button><button id="start">Start five-account run</button>
+<div id="log">Ready. Edit config/accounts.json and prompts.json before starting.</div>
+<script>
+const log=document.getElementById("log");
+document.getElementById("config").onclick=()=>window.appAPI.openConfig();
+document.getElementById("start").onclick=async()=>{const r=await window.appAPI.start();log.textContent+="\n"+r.message;};
+window.appAPI.onEvent(e=>{log.textContent+="\n"+e.message;log.scrollTop=log.scrollHeight;});
+</script></body></html>
